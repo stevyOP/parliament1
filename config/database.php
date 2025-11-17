@@ -17,18 +17,26 @@ if (file_exists(__DIR__ . '/../.env')) {
 }
 
 class Database {
+    private static $instance = null;
     private $host;
     private $db_name;
     private $username;
     private $password;
     private $conn;
 
-    public function __construct() {
+    private function __construct() {
         global $env_vars;
         $this->host = $env_vars['DB_HOST'] ?? 'localhost';
         $this->db_name = $env_vars['DB_NAME'] ?? 'parliament1_db';
         $this->username = $env_vars['DB_USERNAME'] ?? 'root';
         $this->password = $env_vars['DB_PASSWORD'] ?? '';
+    }
+    
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function getConnection() {
@@ -58,8 +66,7 @@ class Database {
 }
 
 // Global database connection
-$database = new Database();
-$db = $database->getConnection();
+$db = Database::getInstance()->getConnection();
 ?>
 
 

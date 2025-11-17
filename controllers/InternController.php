@@ -360,6 +360,119 @@ class InternController {
             exit;
         }
     }
+    
+    /**
+     * View attendance/calendar
+     */
+    public function attendance() {
+        requireRole('intern');
+        
+        $user_id = $_SESSION['user_id'];
+        $month = $_GET['month'] ?? date('m');
+        $year = $_GET['year'] ?? date('Y');
+        
+        try {
+            // Get all logs for the month
+            $stmt = $this->db->prepare("
+                SELECT * FROM daily_logs 
+                WHERE intern_id = ? 
+                AND MONTH(date) = ? 
+                AND YEAR(date) = ?
+                ORDER BY date ASC
+            ");
+            $stmt->execute([$user_id, $month, $year]);
+            $logs = $stmt->fetchAll();
+            
+            // Get profile
+            $stmt = $this->db->prepare("
+                SELECT ip.*, u.name as supervisor_name
+                FROM intern_profiles ip
+                JOIN users u ON ip.supervisor_id = u.id
+                WHERE ip.user_id = ?
+            ");
+            $stmt->execute([$user_id]);
+            $profile = $stmt->fetch();
+            
+            include 'views/intern/attendance.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Failed to load attendance.');
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+    }
+    
+    /**
+     * View statistics
+     */
+    public function statistics() {
+        requireRole('intern');
+        
+        $user_id = $_SESSION['user_id'];
+        
+        try {
+            // Get all logs
+            $stmt = $this->db->prepare("
+                SELECT * FROM daily_logs 
+                WHERE intern_id = ?
+                ORDER BY date DESC
+            ");
+            $stmt->execute([$user_id]);
+            $all_logs = $stmt->fetchAll();
+            
+            // Get all evaluations
+            $stmt = $this->db->prepare("
+                SELECT * FROM evaluations 
+                WHERE intern_id = ?
+                ORDER BY week_no ASC
+            ");
+            $stmt->execute([$user_id]);
+            $all_evaluations = $stmt->fetchAll();
+            
+            // Calculate statistics
+            $total_logs = count($all_logs);
+            $approved_logs = count(array_filter($all_logs, function($log) { return $log['status'] === 'approved'; }));
+            $pending_logs = count(array_filter($all_logs, function($log) { return $log['status'] === 'pending'; }));
+            $rejected_logs = count(array_filter($all_logs, function($log) { return $log['status'] === 'rejected'; }));
+            
+            // Skills analysis
+            $all_skills = [];
+            foreach ($all_logs as $log) {
+                if (!empty($log['skills'])) {
+                    $skills = array_map('trim', explode(',', $log['skills']));
+                    $all_skills = array_merge($all_skills, $skills);
+                }
+            }
+            $skills_count = array_count_values($all_skills);
+            arsort($skills_count);
+            
+            // Monthly breakdown
+            $monthly_stats = [];
+            foreach ($all_logs as $log) {
+                $month_key = date('Y-m', strtotime($log['date']));
+                if (!isset($monthly_stats[$month_key])) {
+                    $monthly_stats[$month_key] = ['total' => 0, 'approved' => 0, 'pending' => 0, 'rejected' => 0];
+                }
+                $monthly_stats[$month_key]['total']++;
+                $monthly_stats[$month_key][$log['status']]++;
+            }
+            
+            // Get profile
+            $stmt = $this->db->prepare("
+                SELECT ip.*, u.name as supervisor_name
+                FROM intern_profiles ip
+                JOIN users u ON ip.supervisor_id = u.id
+                WHERE ip.user_id = ?
+            ");
+            $stmt->execute([$user_id]);
+            $profile = $stmt->fetch();
+            
+            include 'views/intern/statistics.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Failed to load statistics.');
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+    }
 
     /**
      * Generate PDF content

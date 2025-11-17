@@ -205,6 +205,24 @@ class DashboardController {
             ");
             $stmt->execute([$user_id]);
             $pending_logs = $stmt->fetch()['count'];
+            
+            // Approved logs count
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) as count 
+                FROM daily_logs 
+                WHERE intern_id = ? AND status = 'approved'
+            ");
+            $stmt->execute([$user_id]);
+            $approved_logs = $stmt->fetch()['count'];
+            
+            // Total logs count
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) as count 
+                FROM daily_logs 
+                WHERE intern_id = ?
+            ");
+            $stmt->execute([$user_id]);
+            $total_logs = $stmt->fetch()['count'];
 
             // Recent evaluations
             $stmt = $this->db->prepare("
@@ -225,21 +243,70 @@ class DashboardController {
             ");
             $stmt->execute([$user_id]);
             $profile = $stmt->fetch();
+            
+            // Get recent announcements
+            $stmt = $this->db->prepare("
+                SELECT a.*, u.name as created_by_name 
+                FROM announcements a 
+                JOIN users u ON a.created_by = u.id 
+                ORDER BY a.date_created DESC 
+                LIMIT 5
+            ");
+            $stmt->execute();
+            $recent_announcements = $stmt->fetchAll();
+            
+            // Get skills summary (unique skills from logs)
+            $stmt = $this->db->prepare("
+                SELECT skills FROM daily_logs 
+                WHERE intern_id = ? AND skills IS NOT NULL AND skills != ''
+                ORDER BY date DESC
+            ");
+            $stmt->execute([$user_id]);
+            $skills_data = $stmt->fetchAll();
+            $all_skills = [];
+            foreach ($skills_data as $row) {
+                $skills = array_map('trim', explode(',', $row['skills']));
+                $all_skills = array_merge($all_skills, $skills);
+            }
+            $skills_summary = array_count_values($all_skills);
+            arsort($skills_summary);
+            $skills_summary = array_slice($skills_summary, 0, 10);
+            
+            // Get calendar data (logs for current month)
+            $stmt = $this->db->prepare("
+                SELECT DATE(date) as log_date, status 
+                FROM daily_logs 
+                WHERE intern_id = ? 
+                AND MONTH(date) = MONTH(CURDATE())
+                AND YEAR(date) = YEAR(CURDATE())
+            ");
+            $stmt->execute([$user_id]);
+            $calendar_logs = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
             return [
                 'recent_logs' => $recent_logs,
                 'logs_this_week' => $logs_this_week,
                 'pending_logs' => $pending_logs,
+                'approved_logs' => $approved_logs,
+                'total_logs' => $total_logs,
                 'recent_evaluations' => $recent_evaluations,
-                'profile' => $profile
+                'profile' => $profile,
+                'recent_announcements' => $recent_announcements,
+                'skills_summary' => $skills_summary,
+                'calendar_logs' => $calendar_logs
             ];
         } catch (Exception $e) {
             return [
                 'recent_logs' => [],
                 'logs_this_week' => 0,
                 'pending_logs' => 0,
+                'approved_logs' => 0,
+                'total_logs' => 0,
                 'recent_evaluations' => [],
-                'profile' => null
+                'profile' => null,
+                'recent_announcements' => [],
+                'skills_summary' => [],
+                'calendar_logs' => []
             ];
         }
     }
