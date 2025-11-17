@@ -72,13 +72,13 @@ class AuthController {
                     // Redirect based on role
                     switch ($user['role']) {
                         case 'admin':
-                            header('Location: index.php?page=admin');
+                            header('Location: index.php?page=dashboard');
                             break;
                         case 'supervisor':
-                            header('Location: index.php?page=supervisor');
+                            header('Location: index.php?page=dashboard');
                             break;
                         case 'intern':
-                            header('Location: index.php?page=intern');
+                            header('Location: index.php?page=dashboard');
                             break;
                         default:
                             header('Location: index.php?page=dashboard');

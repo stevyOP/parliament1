@@ -16,8 +16,7 @@ class InternController {
      * Display intern dashboard (redirected from main dashboard)
      */
     public function index() {
-        header('Location: index.php?page=dashboard');
-        exit;
+        $this->logs();
     }
 
     /**

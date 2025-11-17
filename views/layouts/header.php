@@ -242,8 +242,11 @@
                         </a>
                         
                         <?php if ($_SESSION['role'] === 'intern'): ?>
-                            <a class="nav-link <?= ($_GET['page'] ?? '') === 'intern' ? 'active' : '' ?>" href="index.php?page=intern">
+                            <a class="nav-link <?= ($_GET['page'] ?? '') === 'intern' ? 'active' : '' ?>" href="index.php?page=intern&action=logs">
                                 <i class="fas fa-clipboard-list me-2"></i>Daily Logs
+                            </a>
+                            <a class="nav-link <?= ($_GET['page'] ?? '') === 'intern' && ($_GET['action'] ?? '') === 'evaluations' ? 'active' : '' ?>" href="index.php?page=intern&action=evaluations">
+                                <i class="fas fa-star me-2"></i>My Evaluations
                             </a>
                         <?php endif; ?>
                         
