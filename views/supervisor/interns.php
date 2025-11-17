@@ -193,8 +193,8 @@ new Chart(logsCtx, {
         datasets: [{
             label: 'Total Logs',
             data: totalLogs,
-            backgroundColor: '#667eea',
-            borderColor: '#667eea',
+            backgroundColor: '#840100',
+            borderColor: '#840100',
             borderWidth: 1
         }, {
             label: 'Approved Logs',

@@ -182,10 +182,10 @@ new Chart(usersByRoleCtx, {
         datasets: [{
             data: roleCounts,
             backgroundColor: [
-                '#667eea',
-                '#764ba2',
-                '#f093fb',
-                '#f5576c'
+                '#840100',
+                '#5c0100',
+                '#a60100',
+                '#3d0100'
             ],
             borderWidth: 2,
             borderColor: '#fff'

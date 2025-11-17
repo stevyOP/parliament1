@@ -374,14 +374,14 @@ class InternController {
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
                 .header { text-align: center; margin-bottom: 30px; }
-                .header h1 { color: #1e3c72; margin-bottom: 10px; }
-                .header h2 { color: #667eea; margin-bottom: 20px; }
+                .header h1 { color: #840100; margin-bottom: 10px; }
+                .header h2 { color: #840100; margin-bottom: 20px; }
                 .info-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
                 .info-table td { padding: 8px; border: 1px solid #ddd; }
                 .info-table td:first-child { background-color: #f8f9fa; font-weight: bold; width: 200px; }
                 .logs-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
                 .logs-table th, .logs-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-                .logs-table th { background-color: #1e3c72; color: white; }
+                .logs-table th { background-color: #840100; color: white; }
                 .logs-table tr:nth-child(even) { background-color: #f8f9fa; }
                 .summary { background-color: #e9ecef; padding: 20px; border-radius: 5px; }
                 .footer { text-align: center; margin-top: 30px; color: #6c757d; }

@@ -189,15 +189,15 @@ new Chart(performanceCtx, {
         datasets: [{
             label: 'Technical Skills',
             data: technicalScores,
-            borderColor: '#667eea',
-            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            borderColor: '#840100',
+            backgroundColor: 'rgba(132, 1, 0, 0.1)',
             tension: 0.4,
             fill: true
         }, {
             label: 'Soft Skills',
             data: softSkillsScores,
-            borderColor: '#764ba2',
-            backgroundColor: 'rgba(118, 75, 162, 0.1)',
+            borderColor: '#5c0100',
+            backgroundColor: 'rgba(92, 1, 0, 0.1)',
             tension: 0.4,
             fill: true
         }]

@@ -20,13 +20,13 @@
     <!-- Custom CSS -->
     <style>
         :root {
-            --primary-color: #1e3c72;
-            --secondary-color: #2a5298;
-            --accent-color: #667eea;
+            --primary-color: #840100;
+            --secondary-color: #5c0100;
+            --accent-color: #840100;
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
-            --info-color: #17a2b8;
+            --info-color: #840100;
         }
 
         body {
@@ -68,7 +68,7 @@
 
         .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
-            background: linear-gradient(135deg, var(--accent-color) 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #840100 0%, #5c0100 100%);
             color: white;
             transform: translateX(5px);
         }
@@ -96,7 +96,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-color) 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #840100 0%, #5c0100 100%);
             border: none;
             border-radius: 8px;
             padding: 10px 20px;
@@ -105,11 +105,11 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(132, 1, 0, 0.4);
         }
 
         .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #840100 0%, #5c0100 100%);
             color: white;
             border-radius: 15px;
             padding: 25px;
@@ -187,12 +187,46 @@
         }
 
         .breadcrumb-item a {
-            color: var(--accent-color);
+            color: #840100;
             text-decoration: none;
         }
 
         .breadcrumb-item.active {
             color: #6c757d;
+        }
+
+        /* Dropdown styling */
+        .navbar .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .navbar .dropdown-item {
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #840100;
+            padding-left: 25px;
+        }
+
+        .navbar .dropdown-divider {
+            margin: 0.5rem 0;
+        }
+
+        .navbar .nav-link.dropdown-toggle {
+            background-color: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-link.dropdown-toggle:hover {
+            background-color: rgba(255,255,255,0.2);
         }
     </style>
 </head>
@@ -212,18 +246,37 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-2"></i>
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
                             <?= $_SESSION['name'] ?? 'User' ?>
+                            <span class="badge bg-light text-dark ms-2"><?= ucfirst($_SESSION['role'] ?? 'User') ?></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                                <i class="fas fa-key me-2"></i>Change Password
-                            </a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <div class="dropdown-item-text">
+                                    <small class="text-muted">Signed in as</small><br>
+                                    <strong><?= $_SESSION['name'] ?? 'User' ?></strong><br>
+                                    <small class="text-muted"><?= $_SESSION['email'] ?? '' ?></small>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="index.php?page=login&action=logout">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
+                            <li>
+                                <a class="dropdown-item" href="index.php?page=dashboard">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                    <i class="fas fa-key me-2"></i>Change Password
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="index.php?page=login&action=logout">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

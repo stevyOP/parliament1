@@ -91,6 +91,21 @@
                 $('.alert').fadeOut();
             }, 5000);
 
+            // Ensure dropdowns work properly
+            $('.dropdown-toggle').on('click', function(e) {
+                e.preventDefault();
+                var $dropdown = $(this).next('.dropdown-menu');
+                $('.dropdown-menu').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-menu').removeClass('show');
+                }
+            });
+
             // Diagnostic
             console.log('Page scripts initialized');
 

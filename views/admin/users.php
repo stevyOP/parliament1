@@ -197,8 +197,8 @@ new Chart(activityCtx, {
         labels: ['Total Logs', 'Total Evaluations'],
         datasets: [{
             data: [totalLogs, totalEvaluations],
-            backgroundColor: ['#667eea', '#764ba2'],
-            borderColor: ['#667eea', '#764ba2'],
+            backgroundColor: ['#840100', '#5c0100'],
+            borderColor: ['#840100', '#5c0100'],
             borderWidth: 1
         }]
     },
