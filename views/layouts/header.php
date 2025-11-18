@@ -87,12 +87,113 @@
             backdrop-filter: blur(20px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             padding: 1rem 0;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%);
+            border-image-slice: 1;
+            position: relative;
+            z-index: 1040;
+            overflow: visible !important;
+        }
+
+        .navbar .container-fluid {
+            overflow: visible !important;
+        }
+
+        .navbar .navbar-collapse {
+            overflow: visible !important;
+        }
+
+        .navbar .navbar-nav {
+            overflow: visible !important;
+        }
+
+        .navbar .nav-item.dropdown {
+            position: relative;
+            overflow: visible !important;
+        }
+
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37 20%, #f4d03f 50%, #d4af37 80%, transparent);
+            opacity: 0.8;
         }
 
         .navbar-brand {
             font-weight: 800;
             font-size: 1.5rem;
             color: white !important;
+        }
+
+        .navbar .nav-link.dropdown-toggle {
+            color: white !important;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .navbar .nav-link.dropdown-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .nav-link.dropdown-toggle::after {
+            margin-left: 0;
+            transition: transform 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .navbar .nav-link.dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
+        }
+
+        .navbar .user-avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .navbar .user-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .navbar .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.625rem;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         /* Sidebar */
@@ -103,7 +204,7 @@
             min-height: calc(100vh - 76px);
             position: sticky;
             top: 76px;
-            z-index: 1050;
+            z-index: 1000;
             border-right: 1px solid rgba(132, 1, 0, 0.1);
         }
 
@@ -429,27 +530,168 @@
             transform: scale(1.01);
         }
 
-        /* Dropdown */
+        /* Dropdown Menu - Profile Card Style */
         .dropdown-menu {
             border: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            border-radius: 16px;
-            padding: 1rem;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 0;
             backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.98);
+            background: white;
             animation: fadeInUp 0.3s ease;
+            min-width: 280px;
+            margin-top: 0.75rem !important;
+            border-left: 3px solid #d4af37;
+            position: fixed !important;
+            z-index: 99999 !important;
+            transform: none !important;
+            will-change: transform;
+        }
+
+        .dropdown-menu.show {
+            display: block !important;
+        }
+        
+        /* Dropdown backdrop for better visibility */
+        .dropdown-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.02);
+            z-index: 99998;
+            display: none;
+        }
+        
+        .dropdown-backdrop.show {
+            display: block;
+        }
+
+        /* Profile Header Section */
+        .dropdown-profile-header {
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, rgba(122, 0, 0, 0.03), rgba(122, 0, 0, 0.01));
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-profile-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #7A0000;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+            flex-shrink: 0;
+        }
+
+        .dropdown-profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-profile-name {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-profile-role {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-profile-email {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin: 2px 0 0 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Menu Items Section */
+        .dropdown-menu-items {
+            padding: 0.5rem;
         }
 
         .dropdown-item {
-            border-radius: 10px;
-            padding: 0.875rem 1.25rem;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
             margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #475569;
+            border: none;
+        }
+
+        .dropdown-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 1rem;
+            color: #64748b;
+            transition: all 0.2s ease;
         }
 
         .dropdown-item:hover {
-            background: linear-gradient(135deg, rgba(132, 1, 0, 0.1), rgba(92, 1, 0, 0.1));
-            transform: translateX(8px);
+            background: rgba(122, 0, 0, 0.06);
+            color: #7A0000;
+            transform: translateX(4px);
+        }
+
+        .dropdown-item:hover i {
+            color: #7A0000;
+        }
+
+        .dropdown-item.text-danger {
+            color: #dc2626;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: rgba(220, 38, 38, 0.08);
+            color: #b91c1c;
+        }
+
+        .dropdown-item.text-danger:hover i {
+            color: #b91c1c;
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Dropdown Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Loading Overlay */
@@ -490,6 +732,56 @@
                 transform: scale(1.05);
                 opacity: 0.8;
             }
+        }
+
+        /* Calendar Styles */
+        .calendar-mini {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .calendar-mini .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .calendar-mini .col {
+            padding: 2px;
+            flex: 0 0 14.2857%;
+            max-width: 14.2857%;
+        }
+
+        .calendar-mini .fw-bold {
+            color: var(--dark-color);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calendar-mini small.d-block {
+            min-height: 32px;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: default;
+            aspect-ratio: 1;
+        }
+
+        .calendar-mini small.d-block:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1;
+        }
+
+        .calendar-mini .bg-light {
+            background-color: #f1f3f5 !important;
+            border: 1px solid #e9ecef;
+        }
+
+        .calendar-mini .border-primary {
+            box-shadow: 0 0 0 2px var(--primary-color);
+            font-weight: 700 !important;
         }
 
         /* Scroll Animations */
@@ -592,28 +884,44 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false" style="color: white; font-weight: 600;">
-                            <i class="fas fa-user-circle me-2"></i>
-                            <?= $_SESSION['name'] ?? 'User' ?>
-                            <span class="badge bg-light text-dark ms-2"><?= ucfirst($_SESSION['role'] ?? 'User') ?></span>
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar-circle">
+                                <?= strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)) ?>
+                            </div>
+                            <span class="user-name"><?= $_SESSION['name'] ?? 'User' ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li>
-                                <div class="dropdown-item-text">
-                                    <small class="text-muted">Signed in as</small><br>
-                                    <strong><?= $_SESSION['name'] ?? 'User' ?></strong><br>
-                                    <small class="text-muted"><?= $_SESSION['email'] ?? '' ?></small>
+                            <!-- Profile Header -->
+                            <li class="dropdown-profile-header">
+                                <div class="dropdown-profile-avatar">
+                                    <?= strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)) ?>
+                                </div>
+                                <div class="dropdown-profile-info">
+                                    <p class="dropdown-profile-name"><?= $_SESSION['name'] ?? 'User' ?></p>
+                                    <p class="dropdown-profile-role"><?= ucfirst($_SESSION['role'] ?? 'User') ?></p>
+                                    <p class="dropdown-profile-email"><?= $_SESSION['email'] ?? '' ?></p>
                                 </div>
                             </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
+                            
+                            <!-- Menu Items -->
+                            <li class="dropdown-menu-items">
                                 <a class="dropdown-item" href="index.php?page=profile">
-                                    <i class="fas fa-user me-2"></i>My Profile
+                                    <i class="fas fa-user"></i>
+                                    <span>View Profile</span>
+                                </a>
+                                <a class="dropdown-item" href="index.php?page=profile&action=settings">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Settings</span>
                                 </a>
                             </li>
-                            <li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Logout -->
+                            <li class="dropdown-menu-items">
                                 <a class="dropdown-item text-danger" href="index.php?page=login&action=logout">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
                                 </a>
                             </li>
                         </ul>
@@ -623,8 +931,8 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid" style="overflow: visible;">
+        <div class="row" style="overflow: visible;">
             <!-- Sidebar -->
             <div class="col-md-3 col-lg-2 px-0">
                 <div class="sidebar">
@@ -634,7 +942,7 @@
                         </a>
                         
                         <?php if ($_SESSION['role'] === 'intern'): ?>
-                            <a class="nav-link <?= ($_GET['page'] ?? '') === 'intern' ? 'active' : '' ?>" href="index.php?page=intern&action=logs">
+                            <a class="nav-link <?= ($_GET['page'] ?? '') === 'intern' && ($_GET['action'] ?? 'logs') === 'logs' ? 'active' : '' ?>" href="index.php?page=intern&action=logs">
                                 <i class="fas fa-clipboard-list me-2"></i>Daily Logs
                             </a>
                             <a class="nav-link <?= ($_GET['page'] ?? '') === 'intern' && ($_GET['action'] ?? '') === 'evaluations' ? 'active' : '' ?>" href="index.php?page=intern&action=evaluations">

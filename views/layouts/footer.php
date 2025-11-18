@@ -427,6 +427,103 @@
             console.log('Enhanced UX features initialized');
             console.log('Keyboard shortcuts: Alt+D (Dashboard), Alt+P (Profile), Alt+L (Logout), Alt+T (Tour)');
 
+            // =================================================================
+            // DROPDOWN FIX - Ensure dropdown is never clipped
+            // =================================================================
+            const dropdownToggle = document.getElementById('userDropdown');
+            const dropdownMenu = dropdownToggle ? dropdownToggle.nextElementSibling : null;
+            
+            if (dropdownToggle && dropdownMenu) {
+                let isDropdownOpen = false;
+                let backdrop = null;
+                
+                // Create backdrop
+                backdrop = document.createElement('div');
+                backdrop.className = 'dropdown-backdrop';
+                document.body.appendChild(backdrop);
+                
+                // Close dropdown when clicking backdrop
+                backdrop.addEventListener('click', function() {
+                    $(dropdownToggle).dropdown('hide');
+                });
+                
+                // Function to position dropdown relative to trigger
+                function positionDropdown() {
+                    if (!isDropdownOpen) return;
+                    
+                    const rect = dropdownToggle.getBoundingClientRect();
+                    const dropdownHeight = dropdownMenu.offsetHeight;
+                    const dropdownWidth = dropdownMenu.offsetWidth;
+                    const viewportHeight = window.innerHeight;
+                    const viewportWidth = window.innerWidth;
+                    
+                    // Calculate position
+                    let top = rect.bottom + 8;
+                    let left = rect.right - dropdownWidth;
+                    
+                    // Ensure it doesn't go off screen
+                    if (left < 0) left = 8;
+                    if (left + dropdownWidth > viewportWidth) {
+                        left = viewportWidth - dropdownWidth - 8;
+                    }
+                    
+                    // Check if dropdown goes below viewport
+                    if (top + dropdownHeight > viewportHeight) {
+                        // Position above the trigger instead
+                        top = rect.top - dropdownHeight - 8;
+                    }
+                    
+                    // Ensure it doesn't go above screen
+                    if (top < 0) top = 8;
+                    
+                    dropdownMenu.style.position = 'fixed';
+                    dropdownMenu.style.top = top + 'px';
+                    dropdownMenu.style.left = left + 'px';
+                    dropdownMenu.style.right = 'auto';
+                    dropdownMenu.style.bottom = 'auto';
+                    dropdownMenu.style.zIndex = '99999';
+                    dropdownMenu.style.transform = 'none';
+                    dropdownMenu.style.margin = '0';
+                }
+                
+                // Move dropdown to body when opened
+                dropdownToggle.addEventListener('show.bs.dropdown', function() {
+                    isDropdownOpen = true;
+                    
+                    // Move to body to escape any overflow constraints
+                    if (dropdownMenu.parentElement !== document.body) {
+                        document.body.appendChild(dropdownMenu);
+                    }
+                    
+                    // Show backdrop
+                    if (backdrop) {
+                        backdrop.classList.add('show');
+                    }
+                    
+                    // Position it
+                    setTimeout(positionDropdown, 10);
+                });
+                
+                dropdownToggle.addEventListener('shown.bs.dropdown', function() {
+                    positionDropdown();
+                });
+                
+                dropdownToggle.addEventListener('hide.bs.dropdown', function() {
+                    isDropdownOpen = false;
+                    
+                    // Hide backdrop
+                    if (backdrop) {
+                        backdrop.classList.remove('show');
+                    }
+                });
+                
+                // Reposition on scroll and resize
+                window.addEventListener('scroll', positionDropdown, { passive: true });
+                window.addEventListener('resize', positionDropdown, { passive: true });
+                
+                console.log('Dropdown portal solution initialized with backdrop');
+            }
+
         });
     </script>
 </body>

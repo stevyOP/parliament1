@@ -36,6 +36,71 @@ $calendar_logs = $calendar_logs ?? [];
     </div>
 </div>
 
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=intern&action=addLog" class="btn btn-outline-primary w-100 py-3">
+                            <i class="fas fa-plus fa-2x d-block mb-2"></i>
+                            <span>Add Daily Log</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=intern&action=logs" class="btn btn-outline-success w-100 py-3">
+                            <i class="fas fa-clipboard-list fa-2x d-block mb-2"></i>
+                            <span>View All Logs</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=intern&action=evaluations" class="btn btn-outline-warning w-100 py-3">
+                            <i class="fas fa-star fa-2x d-block mb-2"></i>
+                            <span>My Evaluations</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=intern&action=attendance" class="btn btn-outline-info w-100 py-3">
+                            <i class="fas fa-calendar-check fa-2x d-block mb-2"></i>
+                            <span>Attendance</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=intern&action=statistics" class="btn btn-outline-danger w-100 py-3">
+                            <i class="fas fa-chart-bar fa-2x d-block mb-2"></i>
+                            <span>My Statistics</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=intern&action=weeklyReport" class="btn btn-outline-secondary w-100 py-3">
+                            <i class="fas fa-file-pdf fa-2x d-block mb-2"></i>
+                            <span>Weekly Report</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="index.php?page=profile" class="btn btn-outline-dark w-100 py-3">
+                            <i class="fas fa-user fa-2x d-block mb-2"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <button onclick="window.print()" class="btn btn-outline-primary w-100 py-3">
+                            <i class="fas fa-print fa-2x d-block mb-2"></i>
+                            <span>Print Dashboard</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Statistics Cards -->
 <div class="row mb-4">
     <div class="col-md-3">
@@ -250,7 +315,7 @@ $calendar_logs = $calendar_logs ?? [];
                     $days_in_month = date('t', $first_day);
                     $day_of_week = date('w', $first_day);
                     ?>
-                    <div class="row text-center mb-2">
+                    <div class="row text-center mb-2 g-0">
                         <div class="col"><small class="fw-bold">Sun</small></div>
                         <div class="col"><small class="fw-bold">Mon</small></div>
                         <div class="col"><small class="fw-bold">Tue</small></div>
@@ -262,17 +327,17 @@ $calendar_logs = $calendar_logs ?? [];
                     <?php
                     $day = 1;
                     for ($week = 0; $week < 6 && $day <= $days_in_month; $week++) {
-                        echo '<div class="row text-center mb-1">';
+                        echo '<div class="row text-center mb-1 g-0">';
                         for ($dow = 0; $dow < 7; $dow++) {
                             if (($week == 0 && $dow < $day_of_week) || $day > $days_in_month) {
-                                echo '<div class="col"><small>&nbsp;</small></div>';
+                                echo '<div class="col"><small class="d-block" style="min-height: 32px;">&nbsp;</small></div>';
                             } else {
                                 $current_date = sprintf('%04d-%02d-%02d', $year, $month, $day);
                                 $status = isset($calendar_logs[$current_date]) ? $calendar_logs[$current_date] : null;
                                 $bg_class = $status === 'approved' ? 'bg-success' : ($status === 'pending' ? 'bg-warning' : ($status === 'rejected' ? 'bg-danger' : 'bg-light'));
-                                $text_class = $status ? 'text-white' : 'text-dark';
-                                $is_today = $day == date('d') ? 'border border-primary border-2' : '';
-                                echo '<div class="col"><small class="d-block rounded ' . $bg_class . ' ' . $text_class . ' ' . $is_today . ' p-1" style="font-size: 11px;">' . $day . '</small></div>';
+                                $text_class = $status ? 'text-white' : 'text-muted';
+                                $is_today = ($day == date('d') && $month == date('m') && $year == date('Y')) ? 'border border-primary' : '';
+                                echo '<div class="col"><small class="d-block rounded ' . $bg_class . ' ' . $text_class . ' ' . $is_today . '" style="font-size: 0.75rem;">' . $day . '</small></div>';
                                 $day++;
                             }
                         }
@@ -283,16 +348,23 @@ $calendar_logs = $calendar_logs ?? [];
                 <hr>
                 <div class="d-flex justify-content-around text-center small">
                     <div>
-                        <span class="badge bg-success">&nbsp;</span>
-                        <small class="d-block">Approved</small>
+                        <span class="badge bg-success" style="width: 20px; height: 20px;">&nbsp;</span>
+                        <small class="d-block mt-1">Approved</small>
                     </div>
                     <div>
-                        <span class="badge bg-warning">&nbsp;</span>
-                        <small class="d-block">Pending</small>
+                        <span class="badge bg-warning" style="width: 20px; height: 20px;">&nbsp;</span>
+                        <small class="d-block mt-1">Pending</small>
                     </div>
                     <div>
-                        <span class="badge bg-danger">&nbsp;</span>
-                        <small class="d-block">Rejected</small>
+                        <span class="badge bg-danger" style="width: 20px; height: 20px;">&nbsp;</span>
+                        <small class="d-block mt-1">Rejected</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-light border" style="width: 20px; height: 20px;">&nbsp;</span>
+                        <small class="d-block mt-1">No Log</small>
+                    </div>
+                </div>
+            </div>
                     </div>
                     <div>
                         <span class="badge bg-light border">&nbsp;</span>
@@ -541,71 +613,6 @@ $calendar_logs = $calendar_logs ?? [];
     </div>
 </div>
 <?php endif; ?>
-
-<div class="row mt-4">
-    <!-- Quick Actions -->
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-bolt me-2"></i>Quick Actions
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=addLog" class="btn btn-outline-primary w-100 py-3">
-                            <i class="fas fa-plus fa-2x d-block mb-2"></i>
-                            <span>Add Daily Log</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=logs" class="btn btn-outline-success w-100 py-3">
-                            <i class="fas fa-clipboard-list fa-2x d-block mb-2"></i>
-                            <span>View All Logs</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=evaluations" class="btn btn-outline-warning w-100 py-3">
-                            <i class="fas fa-star fa-2x d-block mb-2"></i>
-                            <span>My Evaluations</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=attendance" class="btn btn-outline-info w-100 py-3">
-                            <i class="fas fa-calendar-check fa-2x d-block mb-2"></i>
-                            <span>Attendance</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=statistics" class="btn btn-outline-danger w-100 py-3">
-                            <i class="fas fa-chart-bar fa-2x d-block mb-2"></i>
-                            <span>My Statistics</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=weeklyReport" class="btn btn-outline-secondary w-100 py-3">
-                            <i class="fas fa-file-pdf fa-2x d-block mb-2"></i>
-                            <span>Weekly Report</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=profile" class="btn btn-outline-dark w-100 py-3">
-                            <i class="fas fa-user fa-2x d-block mb-2"></i>
-                            <span>My Profile</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <button onclick="window.print()" class="btn btn-outline-primary w-100 py-3">
-                            <i class="fas fa-print fa-2x d-block mb-2"></i>
-                            <span>Print Dashboard</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <?php include 'views/layouts/footer.php'; ?>
 
