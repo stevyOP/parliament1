@@ -63,6 +63,7 @@ class SupervisorController {
         
         $user_id = $_SESSION['user_id'];
         $status = $_GET['status'] ?? 'all';
+        $intern_id = $_GET['intern_id'] ?? null;
         
         try {
             $sql = "
@@ -78,6 +79,11 @@ class SupervisorController {
             if ($status !== 'all') {
                 $sql .= " AND dl.status = ?";
                 $params[] = $status;
+            }
+            
+            if ($intern_id) {
+                $sql .= " AND dl.intern_id = ?";
+                $params[] = $intern_id;
             }
             
             $sql .= " ORDER BY dl.date DESC, dl.created_at DESC";
