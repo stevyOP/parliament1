@@ -24,7 +24,8 @@ include 'views/layouts/header.php';
 </div>
 
 <!-- Beta Tester Welcome Notice -->
-<div class="beta-notice-banner">
+<div class="beta-notice-banner" id="betaBanner">
+    <button type="button" class="btn-close" aria-label="Close" onclick="closeBetaBanner()" style="position: absolute; top: 15px; right: 15px;"></button>
     <h5>
         <i class="fas fa-star"></i>
         Thank You for Being a Beta Tester!
@@ -60,15 +61,15 @@ include 'views/layouts/header.php';
                         </a>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=logs" class="btn btn-outline-success w-100 py-3">
-                            <i class="fas fa-clipboard-list fa-2x d-block mb-2"></i>
-                            <span>View All Logs</span>
+                        <a href="index.php?page=supervisor&action=interns" class="btn btn-outline-success w-100 py-3">
+                            <i class="fas fa-users fa-2x d-block mb-2"></i>
+                            <span>Interns</span>
                         </a>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=supervisor&action=interns" class="btn btn-outline-warning w-100 py-3">
-                            <i class="fas fa-users fa-2x d-block mb-2"></i>
-                            <span>Interns</span>
+                        <a href="index.php?page=intern&action=evaluations" class="btn btn-outline-warning w-100 py-3">
+                            <i class="fas fa-star fa-2x d-block mb-2"></i>
+                            <span>Evaluations</span>
                         </a>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
@@ -78,26 +79,17 @@ include 'views/layouts/header.php';
                         </a>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=addLog" class="btn btn-outline-danger w-100 py-3">
-                            <i class="fas fa-plus fa-2x d-block mb-2"></i>
-                            <span>Add Daily Log</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=intern&action=evaluations" class="btn btn-outline-secondary w-100 py-3">
-                            <i class="fas fa-star fa-2x d-block mb-2"></i>
-                            <span>Evaluations</span>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
                         <a href="index.php?page=profile" class="btn btn-outline-dark w-100 py-3">
                             <i class="fas fa-user fa-2x d-block mb-2"></i>
                             <span>My Profile</span>
                         </a>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="index.php?page=profile&action=settings" class="btn btn-outline-primary w-100 py-3">
+                        <a href="index.php?page=profile&action=settings" class="btn btn-outline-secondary w-100 py-3">
                             <i class="fas fa-cog fa-2x d-block mb-2"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
                             <span>Settings</span>
                         </a>
                     </div>
@@ -109,7 +101,7 @@ include 'views/layouts/header.php';
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -122,7 +114,7 @@ include 'views/layouts/header.php';
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -135,7 +127,7 @@ include 'views/layouts/header.php';
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -148,7 +140,7 @@ include 'views/layouts/header.php';
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -165,7 +157,7 @@ include 'views/layouts/header.php';
 
 <div class="row">
     <!-- Users by Role Chart -->
-    <div class="col-md-6">
+    <div class="col-lg-6 col-md-12 mb-4">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
@@ -191,7 +183,7 @@ include 'views/layouts/header.php';
     </div>
 
     <!-- Recent Announcements -->
-    <div class="col-md-6">
+    <div class="col-lg-6 col-md-12 mb-4">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">

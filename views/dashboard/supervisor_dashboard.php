@@ -24,8 +24,8 @@ include 'views/layouts/header.php';
 </div>
 
 <!-- Beta Tester Welcome Notice -->
-<div class="beta-notice-banner" id="betaNotice">
-    <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="document.getElementById('betaNotice').style.display='none'"></button>
+<div class="beta-notice-banner" id="betaBanner">
+    <button type="button" class="btn-close" aria-label="Close" onclick="closeBetaBanner()" style="position: absolute; top: 15px; right: 15px;"></button>
     <h5>
         <i class="fas fa-star"></i>
         Thank You for Being a Beta Tester!

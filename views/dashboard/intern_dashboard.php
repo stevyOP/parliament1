@@ -118,7 +118,7 @@ $calendar_logs = $calendar_logs ?? [];
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -131,7 +131,7 @@ $calendar_logs = $calendar_logs ?? [];
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -144,7 +144,7 @@ $calendar_logs = $calendar_logs ?? [];
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -157,7 +157,7 @@ $calendar_logs = $calendar_logs ?? [];
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
         <div class="stats-card">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -220,7 +220,7 @@ $calendar_logs = $calendar_logs ?? [];
 
 <div class="row">
     <!-- Recent Logs -->
-    <div class="col-md-4">
+    <div class="col-lg-4 col-md-6 mb-4">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
@@ -272,7 +272,7 @@ $calendar_logs = $calendar_logs ?? [];
     </div>
 
     <!-- Announcements -->
-    <div class="col-md-4">
+    <div class="col-lg-4 col-md-6 mb-4">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
@@ -314,7 +314,7 @@ $calendar_logs = $calendar_logs ?? [];
     </div>
 
     <!-- Monthly Calendar View -->
-    <div class="col-md-4">
+    <div class="col-lg-4 col-md-12 mb-4">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">

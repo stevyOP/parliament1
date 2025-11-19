@@ -456,6 +456,11 @@
                 if (banner) {
                     banner.style.display = 'none';
                 }
+            } else {
+                // Auto-close banner after 30 seconds
+                setTimeout(function() {
+                    closeBetaBanner();
+                }, 30000);
             }
 
             // Check if beta floating badge was previously closed
@@ -464,6 +469,11 @@
                 if (badge) {
                     badge.style.display = 'none';
                 }
+            } else {
+                // Auto-close badge after 30 seconds
+                setTimeout(function() {
+                    closeBetaFloatingBadge();
+                }, 30000);
             }
 
             // =================================================================

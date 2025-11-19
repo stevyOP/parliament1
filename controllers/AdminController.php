@@ -210,12 +210,14 @@ class AdminController {
             $user_id = $_POST['user_id'] ?? 0;
             $name = sanitize($_POST['name'] ?? '');
             $email = sanitize($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
             $role = sanitize($_POST['role'] ?? '');
-            $is_active = isset($_POST['is_active']) ? 1 : 0;
+            $is_active = $_POST['is_active'] ?? 1;
             $department = $_POST['department'] ?? 0;
             $supervisor_id = $_POST['supervisor_id'] ?? 0;
             $start_date = $_POST['start_date'] ?? '';
             $end_date = $_POST['end_date'] ?? '';
+            $intern_status = $_POST['intern_status'] ?? 'active';
             $csrf_token = $_POST['csrf_token'] ?? '';
 
             if (!verifyCSRFToken($csrf_token)) {
@@ -246,26 +248,37 @@ class AdminController {
                     exit;
                 }
 
-                // Update user
-                $stmt = $this->db->prepare("
-                    UPDATE users 
-                    SET name = ?, email = ?, role = ?, is_active = ?, updated_at = NOW() 
-                    WHERE id = ?
-                ");
-                $stmt->execute([$name, $email, $role, $is_active, $user_id]);
+                // Update user - with or without password
+                if (!empty($password)) {
+                    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                    $stmt = $this->db->prepare("
+                        UPDATE users 
+                        SET name = ?, email = ?, password = ?, role = ?, is_active = ?, updated_at = NOW() 
+                        WHERE id = ?
+                    ");
+                    $stmt->execute([$name, $email, $password_hash, $role, $is_active, $user_id]);
+                } else {
+                    $stmt = $this->db->prepare("
+                        UPDATE users 
+                        SET name = ?, email = ?, role = ?, is_active = ?, updated_at = NOW() 
+                        WHERE id = ?
+                    ");
+                    $stmt->execute([$name, $email, $role, $is_active, $user_id]);
+                }
 
                 // Update intern profile if applicable
                 if ($role === 'intern' && $supervisor_id && $start_date && $end_date) {
                     $stmt = $this->db->prepare("
                         INSERT INTO intern_profiles (user_id, department, supervisor_id, start_date, end_date, status) 
-                        VALUES (?, ?, ?, ?, ?, 'active')
+                        VALUES (?, ?, ?, ?, ?, ?)
                         ON DUPLICATE KEY UPDATE 
                         department = VALUES(department),
                         supervisor_id = VALUES(supervisor_id),
                         start_date = VALUES(start_date),
-                        end_date = VALUES(end_date)
+                        end_date = VALUES(end_date),
+                        status = VALUES(status)
                     ");
-                    $stmt->execute([$user_id, $department, $supervisor_id, $start_date, $end_date]);
+                    $stmt->execute([$user_id, $department, $supervisor_id, $start_date, $end_date, $intern_status]);
                 }
 
                 logActivity($_SESSION['user_id'], 'user_updated', "Updated user: $name ($role)");
@@ -321,6 +334,222 @@ class AdminController {
 
         header('Location: index.php?page=admin&action=users');
         exit;
+    }
+
+    /**
+     * Display all logs (admin view)
+     */
+    public function logs() {
+        requireRole('admin');
+        
+        // Get filter parameters
+        $filter_intern_id = $_GET['intern_id'] ?? '';
+        $filter_status = $_GET['status'] ?? '';
+        $filter_date_from = $_GET['date_from'] ?? '';
+        $filter_date_to = $_GET['date_to'] ?? '';
+        
+        try {
+            // Get all interns for filter dropdown
+            $stmt = $this->db->prepare("
+                SELECT u.id, u.name, ip.department
+                FROM users u
+                JOIN intern_profiles ip ON u.id = ip.user_id
+                WHERE u.role = 'intern'
+                ORDER BY u.name
+            ");
+            $stmt->execute();
+            $interns = $stmt->fetchAll();
+            
+            // Build query with filters
+            $query = "
+                SELECT dl.*, u.name as intern_name, ip.department, 
+                       s.name as supervisor_name
+                FROM daily_logs dl
+                JOIN users u ON dl.intern_id = u.id
+                LEFT JOIN intern_profiles ip ON u.id = ip.user_id
+                LEFT JOIN users s ON ip.supervisor_id = s.id
+                WHERE 1=1
+            ";
+            $params = [];
+            
+            if ($filter_intern_id) {
+                $query .= " AND dl.intern_id = ?";
+                $params[] = $filter_intern_id;
+            }
+            
+            if ($filter_status) {
+                $query .= " AND dl.status = ?";
+                $params[] = $filter_status;
+            }
+            
+            if ($filter_date_from) {
+                $query .= " AND dl.date >= ?";
+                $params[] = $filter_date_from;
+            }
+            
+            if ($filter_date_to) {
+                $query .= " AND dl.date <= ?";
+                $params[] = $filter_date_to;
+            }
+            
+            $query .= " ORDER BY dl.date DESC, dl.created_at DESC";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($params);
+            $logs = $stmt->fetchAll();
+            
+            // Calculate statistics
+            $total_logs = count($logs);
+            $pending_logs = count(array_filter($logs, fn($l) => $l['status'] === 'pending'));
+            $approved_logs = count(array_filter($logs, fn($l) => $l['status'] === 'approved'));
+            $rejected_logs = count(array_filter($logs, fn($l) => $l['status'] === 'rejected'));
+            
+            include 'views/admin/logs.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Failed to load logs.');
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+    }
+
+    /**
+     * View single log (admin view)
+     */
+    public function viewLog() {
+        requireRole('admin');
+        
+        $log_id = $_GET['id'] ?? 0;
+        
+        try {
+            $stmt = $this->db->prepare("
+                SELECT dl.*, u.name as intern_name, u.email as intern_email,
+                       ip.department, s.name as supervisor_name
+                FROM daily_logs dl
+                JOIN users u ON dl.intern_id = u.id
+                LEFT JOIN intern_profiles ip ON u.id = ip.user_id
+                LEFT JOIN users s ON ip.supervisor_id = s.id
+                WHERE dl.id = ?
+            ");
+            $stmt->execute([$log_id]);
+            $log = $stmt->fetch();
+            
+            if (!$log) {
+                setFlashMessage('error', 'Log not found.');
+                header('Location: index.php?page=admin&action=logs');
+                exit;
+            }
+            
+            include 'views/admin/view_log.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Failed to load log.');
+            header('Location: index.php?page=admin&action=logs');
+            exit;
+        }
+    }
+
+    /**
+     * Display all evaluations (admin view)
+     */
+    public function evaluations() {
+        requireRole('admin');
+        
+        // Get filter parameters
+        $filter_intern_id = $_GET['intern_id'] ?? '';
+        $filter_department = $_GET['department'] ?? '';
+        $filter_week_no = $_GET['week_no'] ?? '';
+        
+        try {
+            // Get all interns for filter dropdown
+            $stmt = $this->db->prepare("
+                SELECT u.id, u.name, ip.department
+                FROM users u
+                JOIN intern_profiles ip ON u.id = ip.user_id
+                WHERE u.role = 'intern'
+                ORDER BY u.name
+            ");
+            $stmt->execute();
+            $interns = $stmt->fetchAll();
+            
+            // Build query with filters
+            $query = "
+                SELECT e.*, u.name as intern_name, ip.department,
+                       s.name as supervisor_name
+                FROM evaluations e
+                JOIN users u ON e.intern_id = u.id
+                LEFT JOIN intern_profiles ip ON u.id = ip.user_id
+                LEFT JOIN users s ON e.supervisor_id = s.id
+                WHERE 1=1
+            ";
+            $params = [];
+            
+            if ($filter_intern_id) {
+                $query .= " AND e.intern_id = ?";
+                $params[] = $filter_intern_id;
+            }
+            
+            if ($filter_department) {
+                $query .= " AND ip.department = ?";
+                $params[] = $filter_department;
+            }
+            
+            if ($filter_week_no) {
+                $query .= " AND e.week_no = ?";
+                $params[] = $filter_week_no;
+            }
+            
+            $query .= " ORDER BY e.week_no DESC, e.created_at DESC";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($params);
+            $evaluations = $stmt->fetchAll();
+            
+            // Calculate statistics
+            $total_evaluations = count($evaluations);
+            $avg_technical = $total_evaluations > 0 ? array_sum(array_column($evaluations, 'rating_technical')) / $total_evaluations : 0;
+            $avg_softskills = $total_evaluations > 0 ? array_sum(array_column($evaluations, 'rating_softskills')) / $total_evaluations : 0;
+            $avg_overall = ($avg_technical + $avg_softskills) / 2;
+            
+            include 'views/admin/evaluations.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Failed to load evaluations.');
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+    }
+
+    /**
+     * View single evaluation (admin view)
+     */
+    public function viewEvaluation() {
+        requireRole('admin');
+        
+        $eval_id = $_GET['id'] ?? 0;
+        
+        try {
+            $stmt = $this->db->prepare("
+                SELECT e.*, u.name as intern_name, u.email as intern_email,
+                       ip.department, s.name as supervisor_name, s.email as supervisor_email
+                FROM evaluations e
+                JOIN users u ON e.intern_id = u.id
+                LEFT JOIN intern_profiles ip ON u.id = ip.user_id
+                LEFT JOIN users s ON e.supervisor_id = s.id
+                WHERE e.id = ?
+            ");
+            $stmt->execute([$eval_id]);
+            $evaluation = $stmt->fetch();
+            
+            if (!$evaluation) {
+                setFlashMessage('error', 'Evaluation not found.');
+                header('Location: index.php?page=admin&action=evaluations');
+                exit;
+            }
+            
+            include 'views/admin/view_evaluation.php';
+        } catch (Exception $e) {
+            setFlashMessage('error', 'Failed to load evaluation.');
+            header('Location: index.php?page=admin&action=evaluations');
+            exit;
+        }
     }
 
     /**
